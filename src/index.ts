@@ -1,6 +1,15 @@
+import { validateRequest } from "./util";
+
+const allowedHosts = [
+	/^multisynq\.github\.io$/,
+	/(^|.*\/\.)multisynq\.io$/,
+];
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
+		if (!validateRequest(request, allowedHosts, true)) {
+			return new Response("Forbidden", { status: 403 });
+		}
 
 		if (request.method !== "POST") {
 			return new Response("Method Not Allowed", { status: 405 });
