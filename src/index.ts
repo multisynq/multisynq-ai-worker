@@ -37,6 +37,15 @@ export default {
 
 		if (response.usage) console.log("AI usage", response.usage);
 
+		// some models return images as a binary ReadableStream
+		if (response instanceof ReadableStream) {
+			return new Response(response, {
+				headers: {
+					"Content-Type": "application/octet-stream",
+				}
+			});
+		}
+
 		return new Response(JSON.stringify(response));
 	},
 } satisfies ExportedHandler<Env>;
