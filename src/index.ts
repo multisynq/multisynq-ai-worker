@@ -1,18 +1,34 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Bind resources to your worker in `wrangler.jsonc`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello World!');
+
+		if (request.method !== "POST") {
+			return new Response("Method Not Allowed", { status: 405 });
+		}
+
+		let body: {
+			run: {
+				model: keyof AiModels,
+				options: Record<string, any>,
+			}
+		};
+
+		try {
+			body = await request.json();
+			console.log("Parsed body:", body);
+			if (!(typeof body?.run?.model === "string" && typeof body?.run?.options === "object")) {
+				return new Response("Missing arguments", { status: 400 });
+			}
+		} catch (error) {
+			return new Response("Invalid Request", { status: 400 });
+		}
+
+		const { model, options } = body.run;
+		const response = await env.AI.run(model, options);
+
+		if (response.usage) console.log("AI usage", response.usage);
+
+		return new Response(JSON.stringify(response));
 	},
 } satisfies ExportedHandler<Env>;
+
