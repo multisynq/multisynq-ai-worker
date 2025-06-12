@@ -1,4 +1,5 @@
-name = "multisynq-ai-worker"
+account_id = "bc6feb096c73ac4e93f628e30eb5a4dc" # Multisynq
+name = "ai-worker"
 main = "src/index.ts"
 compatibility_date = "2025-06-12"
 
