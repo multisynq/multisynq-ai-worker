@@ -27,7 +27,7 @@ function validateOrigin(origin: string, allowedHosts: RegExp[], allowLocal: bool
 		return true;
 	}
 
-	if (allowLocal && isLocalNetworkHost(origin)) return true;
+	if (allowLocal && isLocalNetworkHost(hostname)) return true;
 
 	return false;
 }
