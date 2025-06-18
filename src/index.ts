@@ -1,9 +1,13 @@
 import { validateRequest } from "./util";
 
+ // Allow specific hosts / domains
 const allowedHosts = [
 	/^multisynq\.github\.io$/,
-	/(^|.*\.)multisynq\.io$/,
+	/(^|.*\.)multisynq\.(io|dev)$/,
 ];
+
+// Allow local requests (localhost / local network)
+const allowLocal = true;
 
 function withCORS(response: Response, origin: string | null): Response {
 	const newHeaders = new Headers(response.headers);
@@ -21,7 +25,7 @@ export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		const origin = request.headers.get("Origin");
 
-		if (!validateRequest(request, allowedHosts, true)) {
+		if (!validateRequest(request, allowedHosts, allowLocal)) {
 			return new Response("Forbidden", { status: 403 });
 		}
 
